@@ -37,6 +37,8 @@ Terran::Terran()
 		{
 			//error invalid file
 		}
+		//delete the line
+		delete temp;
 		temp = reader.readLine();
 	}
 }

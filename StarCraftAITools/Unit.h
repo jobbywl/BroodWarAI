@@ -2,6 +2,20 @@
 #include <list>
 #include <string>
 
+enum unitSize
+{
+	S,
+	M,
+	L
+};
+
+struct unitAttack
+{
+	bool explosive;
+	bool concussive;
+	bool splash;
+};
+
 class Unit
 {
 public:
@@ -10,6 +24,23 @@ public:
 private:
 	//stats
 	std::string name;
+	unitSize size;
+	int supply;
+	int minerals;
+	int gas;
+	int armor;
+	int hp;
+	int groundAttack;
+	unitAttack groundAttackType;
+	int airAttack;
+	unitAttack airAttackType;
+	int attackSpeed;
+	int range;
+	int attackMod;
+	int sight;
+	int buildTime;
+	std::string notes;
+
 	//current
 	int Amount;
 };
