@@ -11,29 +11,34 @@ Terran::Terran()
 	CSVReader reader("terran.csv");
 
 	//Read first line from csv
-	std::list<std::string> *temp;
-	temp = reader.readLine();
-	auto i = temp->begin();
-	if (*i == "Unit")
-	{
-		i++;
-		(*mp_Units)[*i] = new Unit(*i);
-	}
-	else if (*i == "Building")
-	{
-		i++;
-		(*mp_Buildings)[*i] = new Unit();
-	}
-	else if (*i == "Upgrade")
-	{
-		i++;
-		(*mp_Upgrades)[*i] = new Unit();
-	}
-	else
-	{
-		//error invalid file
-	}
+	std::list<std::string> *temp = NULL;
 
+	temp = reader.readLine();
+	while (temp != NULL)
+	{
+		
+		auto i = temp->begin();
+		if (*i == "Unit")
+		{
+			i++;
+			(*mp_Units)[*i] = new Unit(temp);
+		}
+		else if (*i == "Building")
+		{
+			i++;
+			//(*mp_Buildings)[*i] = new Unit();
+		}
+		else if (*i == "Upgrade")
+		{
+			i++;
+			//(*mp_Upgrades)[*i] = new Unit();
+		}
+		else
+		{
+			//error invalid file
+		}
+		temp = reader.readLine();
+	}
 }
 
 
