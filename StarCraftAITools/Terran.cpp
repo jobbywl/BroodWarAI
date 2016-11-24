@@ -51,17 +51,18 @@ Terran::~Terran()
 	delete mp_Upgrades;
 }
 
-void AddUnit(TerranUnits)
+void Terran::AddUnit(TerranUnits)
+{
+	std::string temp;
+	(*mp_Units)[temp]->add();
+}
+
+void Terran::AddBuilding(TerranBuildings)
 {
 
 }
 
-void AddBuilding(TerranBuildings)
-{
-
-}
-
-void AddUpgrade(TerranUpgrades)
+void Terran::AddUpgrade(TerranUpgrades)
 {
 
 }

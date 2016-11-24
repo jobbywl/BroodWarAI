@@ -79,3 +79,15 @@ Unit::Unit(std::list<std::string> *temp)
 Unit::~Unit()
 {
 }
+
+int Unit::add()
+{
+	Amount++;
+	return Amount;
+}
+
+int Unit::add(int amount)
+{
+	Amount += amount;
+	return Amount;
+}

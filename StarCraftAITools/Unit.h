@@ -21,6 +21,9 @@ class Unit
 public:
 	Unit(std::list<std::string>*);
 	virtual ~Unit();
+
+	int add();
+	int add(int);
 private:
 	//stats
 	std::string name;
