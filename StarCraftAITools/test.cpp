@@ -1,8 +1,8 @@
-#include "Terran.h"
+#include "Race.h"
 
 int main()
 {
-	Terran terr;
-	terr.AddUnit();
+	Race terr("terran.csv");
+	terr.AddUnit("Marine");
 	return 0;
 }

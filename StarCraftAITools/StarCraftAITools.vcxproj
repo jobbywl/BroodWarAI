@@ -76,21 +76,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Protos.h" />
-    <ClInclude Include="Race.h" />
     <ClInclude Include="CSVReader.h" />
-    <ClInclude Include="Terran.h" />
+    <ClInclude Include="Race.h" />
     <ClInclude Include="Unit.h" />
-    <ClInclude Include="Zerg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Protos.cpp" />
-    <ClCompile Include="Race.cpp" />
     <ClCompile Include="CSVReader.cpp" />
-    <ClCompile Include="Terran.cpp" />
+    <ClCompile Include="Race.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="Unit.cpp" />
-    <ClCompile Include="Zerg.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

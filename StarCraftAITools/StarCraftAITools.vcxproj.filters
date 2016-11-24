@@ -15,38 +15,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Race.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Terran.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Protos.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Zerg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CSVReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Race.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Race.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Terran.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Protos.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Zerg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Unit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Race.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
