@@ -93,9 +93,11 @@
   <ItemGroup>
     <ClCompile Include="Source\Dll.cpp" />
     <ClCompile Include="Source\ExampleAIModule.cpp" />
+    <ClCompile Include="Source\ReplayAnalyzer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ExampleAIModule.h" />
+    <ClInclude Include="Source\ReplayAnalyzer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
