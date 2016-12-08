@@ -16,41 +16,17 @@ ReplayAnalyzer::ReplayAnalyzer(std::string dir)
 {
 	replayList = getDirContents(dir);
 	//create the string containing the file name
-	std::string Filename("C:\\analyzedReplays\\");
-	std::string extension;
-	
-	
 
-	int i = 0;
-	extension += std::to_string(i);
-	extension += ".log";
+	std::string nextmap = replayList->front();
 
-	std::ifstream temp(Filename+extension);
-
-	while (temp.is_open())
+	int tempint = nextmap.find('\\');
+	while (tempint > 0)
 	{
-		temp.close();
-		i++;
-		extension = std::to_string(i);
-		extension += ".log";
-		temp.open(Filename + extension);
-		
+		nextmap.replace(tempint , 1, "/");
+		tempint = nextmap.find('\\');
 	}
-	if (temp.is_open())
-		temp.close();
-
-	Output = new std::fstream;
-	Output->open(Filename+extension, std::fstream::out);
-
-	if (!Output->is_open())
-		return;
-
-	for (auto r = replayList->begin(); r != replayList->end(); r++)
-	{
-		*Output << "#" << *r << std::endl;
-	}
-
-	setNextMap(replayList->front());
+	
+	setNextMap(nextmap);
 	replayList->pop_front();
 }
 
@@ -63,6 +39,31 @@ ReplayAnalyzer::~ReplayAnalyzer()
 
 void ReplayAnalyzer::onStart()
 {
+	std::string Filename("C:\\analyzedReplays\\");
+	std::string extension;
+
+
+
+	int i = 0;
+	extension += std::to_string(i);
+	extension += ".log";
+
+	std::ifstream temp(Filename + extension);
+
+	while (temp.is_open())
+	{
+		temp.close();
+		i++;
+		extension = std::to_string(i);
+		extension += ".log";
+		temp.open(Filename + extension);
+
+	}
+	if (temp.is_open())
+		temp.close();
+
+	Output = new std::fstream;
+	Output->open(Filename + extension, std::fstream::out);
 
 	// Print the map name.
 	// BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!
@@ -82,7 +83,8 @@ void ReplayAnalyzer::onStart()
 	if (Broodwar->isReplay())
 	{
 		Broodwar->setLocalSpeed(0);
-		if (!Broodwar->isDebug())
+		Broodwar->setFrameSkip(1);
+		if (Broodwar->isDebug())
 		{
 			Broodwar->setGUI(false);
 		}
@@ -147,6 +149,9 @@ void ReplayAnalyzer::onEnd(bool isWinner)
 	{
 		setNextMap(replayList->front());
 		replayList->pop_front();
+	}
+	else {
+		setNextMap("maps/replays");
 	}
 
 
@@ -364,12 +369,12 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 	size_t firstNL = temp.rfind('\n', nFPos);
 
 	temp.erase(firstNL, secondNL - firstNL);
-
+	temp2 = "\nmap = ";
+	temp2 += Filename.substr(13, Filename.size());
+	temp2 += '\n';
 	//Now add a new line containing the map variable
-	temp += '\n';
-	temp += "map = ";
-	temp += Filename.substr(13,Filename.size());
-	temp += '\n';
+	temp.insert(firstNL, temp2);
+	
 
 	DeleteFile(L"C:\\Starcraft\\bwapi-data\\bwapi.ini");
 	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::out);
