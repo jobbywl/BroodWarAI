@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PriorityScheduler", "Priori
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StarCraftAITools", "StarCraftAITools\StarCraftAITools.vcxproj", "{289C484F-0AB2-4B1A-97DA-63A19569C895}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{ED60409E-9CFB-4122-9369-1ABF6AC90824}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleAIClient", "ExampleAIClient\ExampleAIClient.vcxproj", "{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +37,14 @@ Global
 		{289C484F-0AB2-4B1A-97DA-63A19569C895}.Debug|Win32.Build.0 = Debug|Win32
 		{289C484F-0AB2-4B1A-97DA-63A19569C895}.Release|Win32.ActiveCfg = Release|Win32
 		{289C484F-0AB2-4B1A-97DA-63A19569C895}.Release|Win32.Build.0 = Release|Win32
+		{ED60409E-9CFB-4122-9369-1ABF6AC90824}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ED60409E-9CFB-4122-9369-1ABF6AC90824}.Debug|Win32.Build.0 = Debug|Win32
+		{ED60409E-9CFB-4122-9369-1ABF6AC90824}.Release|Win32.ActiveCfg = Release|Win32
+		{ED60409E-9CFB-4122-9369-1ABF6AC90824}.Release|Win32.Build.0 = Release|Win32
+		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Debug|Win32.Build.0 = Debug|Win32
+		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Release|Win32.ActiveCfg = Release|Win32
+		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
