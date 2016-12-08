@@ -16,24 +16,31 @@ ReplayAnalyzer::ReplayAnalyzer(std::string dir)
 {
 	replayList = getDirContents(dir);
 	//create the string containing the file name
-	std::string Filename;
-	Filename = "C:\\analyzedReplays\\";
-	Filename += "0.log";
+	std::string Filename("C:\\analyzedReplays\\");
+	std::string extension;
+	
+	
 
-	std::ifstream temp(Filename);
 	int i = 0;
+	extension += std::to_string(i);
+	extension += ".log";
+
+	std::ifstream temp(Filename+extension);
+
 	while (temp.is_open())
 	{
 		temp.close();
-		Filename.replace(Filename.size() - 5, 1, std::to_string(i));
-		temp.open(Filename);
 		i++;
+		extension = std::to_string(i);
+		extension += ".log";
+		temp.open(Filename + extension);
+		
 	}
 	if (temp.is_open())
 		temp.close();
 
 	Output = new std::fstream;
-	Output->open(Filename, std::fstream::out);
+	Output->open(Filename+extension, std::fstream::out);
 
 	if (!Output->is_open())
 		return;
@@ -138,7 +145,7 @@ void ReplayAnalyzer::onEnd(bool isWinner)
 
 	if (replayList->size() != 0)
 	{
-		Broodwar->setMap(replayList->front());
+		setNextMap(replayList->front());
 		replayList->pop_front();
 	}
 
@@ -339,11 +346,17 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 	std::fstream bwapi_ini;
 	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::in);
 
-	std::string temp;
-	bwapi_ini >> temp;
+	std::string temp("");
+	std::string temp2("");
+	while (!bwapi_ini.eof())
+	{
+		getline(bwapi_ini, temp2);
+		temp += temp2 + '\n';
+	}
+		
 
 	bwapi_ini.close();
-	DeleteFile(L"C:\\Starcraft\\bwapi-data\\bwapi.ini");
+	
 
 	//first delete everything after map =
 	size_t nFPos = temp.find("map = ");
@@ -355,5 +368,11 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 	//Now add a new line containing the map variable
 	temp += '\n';
 	temp += "map = ";
-	temp += Filename;
+	temp += Filename.substr(13,Filename.size());
+	temp += '\n';
+
+	DeleteFile(L"C:\\Starcraft\\bwapi-data\\bwapi.ini");
+	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::out);
+	bwapi_ini << temp;
+	bwapi_ini.close();
 }

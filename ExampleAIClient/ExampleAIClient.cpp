@@ -31,12 +31,15 @@ void reconnect()
 int main(int argc, const char* argv[])
 {
 	std::cout << "Connecting..." << std::endl;;
-	reconnect();
-
 
 	BWAPI::AIModule *Caller;
 
 	Caller = new ReplayAnalyzer("C:\\StarCraft\\Maps\\Replays\\");
+
+	reconnect();
+
+
+	
 
 
 
