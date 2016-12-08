@@ -12,62 +12,12 @@ using namespace Filter;
 **This can be used as a training set for the Neural Network
 */
 
-void ReplayAnalyzer::onStart()
+ReplayAnalyzer::ReplayAnalyzer(std::string dir)
 {
-	replayList = getDirContents("C:\\StarCraft\\Maps\\Replays\\");
-
-	// Hello World!
-	Broodwar->sendText("Hello world!");
-
-	// Print the map name.
-	// BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!
-	Broodwar << "The map is " << Broodwar->mapName() << "!" << std::endl;
-
-	// Enable the UserInput flag, which allows us to control the bot and type messages.
-	Broodwar->enableFlag(Flag::UserInput);
-
-	// Uncomment the following line and the bot will know about everything through the fog of war (cheat).
-	//Broodwar->enableFlag(Flag::CompleteMapInformation);
-
-	// Set the command optimization level so that common commands can be grouped
-	// and reduce the bot's APM (Actions Per Minute).
-	Broodwar->setCommandOptimizationLevel(2);
-
+	replayList = getDirContents(dir);
 	//create the string containing the file name
 	std::string Filename;
-	Filename = "./analyzedReplays/";
-
-	// Check if this is a replay
-	if (Broodwar->isReplay())
-	{
-		Broodwar->setLocalSpeed(0);
-		// Announce the players in the replay
-		Broodwar << "The following players are in this replay:" << std::endl;
-
-		// Iterate all the players in the game using a std:: iterator
-		Playerset players = Broodwar->getPlayers();
-		for (auto p : players)
-		{
-			// Only print the player if they are not an observer
-			if (!p->isObserver())
-			{
-				Broodwar << p->getName() << ", playing as " << p->getRace() << std::endl;
-				Filename += (p->getRace().c_str());
-
-
-			}
-		}
-
-	}
-	else // if this is not a replay
-	{
-		// Retrieve you and your enemy's races. enemy() will just return the first enemy.
-		// If you wish to deal with multiple enemies then you must use enemies().
-		Broodwar->sendText("I am a replay analyzer i shouldn't play games :(");
-		Broodwar->sendText("I will be going now bye bye and gg");
-		Broodwar->leaveGame();
-	}
-	Broodwar->sendText(Filename.c_str());
+	Filename = "C:\\analyzedReplays\\";
 	Filename += "0.log";
 
 	std::ifstream temp(Filename);
@@ -85,9 +35,73 @@ void ReplayAnalyzer::onStart()
 	Output = new std::fstream;
 	Output->open(Filename, std::fstream::out);
 
+	if (!Output->is_open())
+		return;
+
 	for (auto r = replayList->begin(); r != replayList->end(); r++)
 	{
-		*Output << *r << std::endl;
+		*Output << "#" << *r << std::endl;
+	}
+
+	setNextMap(replayList->front());
+	replayList->pop_front();
+}
+
+ReplayAnalyzer::~ReplayAnalyzer()
+{
+	Output->close();
+	if (replayList != NULL)
+		delete replayList;
+}
+
+void ReplayAnalyzer::onStart()
+{
+
+	// Print the map name.
+	// BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!
+	Broodwar << "The map is " << Broodwar->mapName() << "!" << std::endl;
+
+	// Enable the UserInput flag, which allows us to control the bot and type messages.
+	Broodwar->enableFlag(Flag::UserInput);
+
+	// Uncomment the following line and the bot will know about everything through the fog of war (cheat).
+	//Broodwar->enableFlag(Flag::CompleteMapInformation);
+
+	// Set the command optimization level so that common commands can be grouped
+	// and reduce the bot's APM (Actions Per Minute).
+	Broodwar->setCommandOptimizationLevel(2);
+
+	// Check if this is a replay
+	if (Broodwar->isReplay())
+	{
+		Broodwar->setLocalSpeed(0);
+		if (!Broodwar->isDebug())
+		{
+			Broodwar->setGUI(false);
+		}
+
+		// Announce the players in the replay
+		Broodwar << "The following players are in this replay:" << std::endl;
+
+		// Iterate all the players in the game using a std:: iterator
+		Playerset players = Broodwar->getPlayers();
+		for (auto p : players)
+		{
+			// Only print the player if they are not an observer
+			if (!p->isObserver())
+			{
+				Broodwar << p->getName() << ", playing as " << p->getRace() << std::endl;
+			}
+		}
+
+	}
+	else // if this is not a replay
+	{
+		// Retrieve you and your enemy's races. enemy() will just return the first enemy.
+		// If you wish to deal with multiple enemies then you must use enemies().
+		Broodwar->sendText("I am a replay analyzer i shouldn't play games :(");
+		Broodwar->sendText("I will be going now bye bye and gg");
+		Broodwar->leaveGame();
 	}
 }
 
@@ -121,39 +135,23 @@ void ReplayAnalyzer::onEnd(bool isWinner)
 	This file is in te Starcraft/bwapi-data directory
 	*/
 
-	Broodwar->setMap(replayList->front());
-	/*std::fstream bwapi_ini;
-	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::out | std::fstream::in);
 
-	std::string temp;
-	do
+	if (replayList->size() != 0)
 	{
-		if (temp.find("map = ") != std::string::npos)
-		{
-			bwapi_ini << replayList->front() << std::endl;
-			replayList->pop_front();
-			break;
-		}
+		Broodwar->setMap(replayList->front());
+		replayList->pop_front();
+	}
 
-		if (bwapi_ini.eof())
-			break;
-	} while (std::getline(bwapi_ini, temp));
-	*/
-	//cleanup everything
+
+
 	Output->close();
-	delete replayList;
-	replayList = NULL;
-
-	Broodwar->restartGame();
-
-
-
+	Broodwar->leaveGame();
 }
 
 void ReplayAnalyzer::onFrame()
 {
 	// Called once every game frame
-
+	Output->flush();
 	// Display the game frame rate as text in the upper left area of the screen
 	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
@@ -331,4 +329,31 @@ std::list<std::string> *ReplayAnalyzer::getDirContents(std::string dir)
 		}
 	} while (FindNextFile(hFind, &found) != 0);
 	return fileList;
+}
+
+void ReplayAnalyzer::setNextMap(std::string Filename)
+{
+	//First read all the contents to a string buffer
+	//Modify where necessary
+	//Write to file
+	std::fstream bwapi_ini;
+	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::in);
+
+	std::string temp;
+	bwapi_ini >> temp;
+
+	bwapi_ini.close();
+	DeleteFile(L"C:\\Starcraft\\bwapi-data\\bwapi.ini");
+
+	//first delete everything after map =
+	size_t nFPos = temp.find("map = ");
+	size_t secondNL = temp.find('\n', nFPos);
+	size_t firstNL = temp.rfind('\n', nFPos);
+
+	temp.erase(firstNL, secondNL - firstNL);
+
+	//Now add a new line containing the map variable
+	temp += '\n';
+	temp += "map = ";
+	temp += Filename;
 }

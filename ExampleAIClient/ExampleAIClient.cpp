@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <string>
+#include <Windows.h>
 
 #include "ReplayAnalyzer.h"
 
@@ -26,6 +27,7 @@ void reconnect()
 	}
 }
 
+
 int main(int argc, const char* argv[])
 {
 	std::cout << "Connecting..." << std::endl;;
@@ -34,9 +36,9 @@ int main(int argc, const char* argv[])
 
 	BWAPI::AIModule *Caller;
 
-	Caller = new ReplayAnalyzer;
+	Caller = new ReplayAnalyzer("C:\\StarCraft\\Maps\\Replays\\");
 
-	Caller->onStart();
+
 
 	while (true)
 	{
@@ -51,24 +53,17 @@ int main(int argc, const char* argv[])
 			}
 		}
 		std::cout << "starting match!" << std::endl;
+
+		Caller->onStart();
 		// Enable some cheat flags
 		Broodwar->enableFlag(Flag::UserInput);
 		// Uncomment to enable complete map information
 		//Broodwar->enableFlag(Flag::CompleteMapInformation);
-		if (Broodwar->isReplay())
-		{
-			Broodwar->setLocalSpeed(0);
-			if (!Broodwar->isDebug())
-			{
-				Broodwar->setFrameSkip(1);
-				Broodwar->setGUI(false);
-				//std::cout.rdbuf(&output);
-			}
-		}
+
 		show_bullets = false;
 		show_visibility_data = false;
 
-		
+
 		while (Broodwar->isInGame())
 		{
 			Caller->onFrame();
@@ -112,6 +107,16 @@ int main(int argc, const char* argv[])
 				case EventType::SaveGame:
 					Caller->onSaveGame(e.getText());
 					break;
+				case EventType::UnitComplete:
+					Caller->onUnitComplete(e.getUnit());
+					break;
+				case EventType::UnitDiscover:
+					Caller->onUnitDiscover(e.getUnit());
+					break;
+				case EventType::UnitEvade:
+					Caller->onUnitEvade(e.getUnit());
+					break;
+
 				}
 			}
 
