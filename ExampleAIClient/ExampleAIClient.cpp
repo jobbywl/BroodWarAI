@@ -33,19 +33,30 @@ int main(int argc, const char* argv[])
 	std::cout << "Connecting..." << std::endl;;
 
 	BWAPI::AIModule *Caller;
-
-	Caller = new ReplayAnalyzer("C:\\StarCraft\\Maps\\Replays\\");
+	//This link has a replay pack with 7708 replays in it of high level. No duplicates
+	//http://emotion.inrialpes.fr/people/synnaeve/TLGGICCUP_gosu_reps.7z
+	//Replay crawler https://github.com/syhw/Broodwar_replays_scrappers
+	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("C:\\StarCraft\\Maps\\Replays\\");
 
 	reconnect();
-
-
-	
-
 
 
 	while (true)
 	{
 		std::cout << "waiting to enter match" << std::endl;
+
+		//TODO: only execute if it was a replay
+		if (p_Analyzer->getReplayAmount() > 0)
+		{
+			std::cout << p_Analyzer->getReplayAmount() << " Replays to go" << std::endl;
+
+		}
+		else
+		{
+			std::cout << "All replays done quitting program now" << std::endl;
+			break;
+		}
+
 		while (!Broodwar->isInGame())
 		{
 			BWAPI::BWAPIClient.update();
@@ -56,7 +67,16 @@ int main(int argc, const char* argv[])
 			}
 		}
 		std::cout << "starting match!" << std::endl;
+		//If the game is a replay load the replay analyzer;
+		if (Broodwar->isReplay())
+		{
 
+			Caller = p_Analyzer;
+		}
+		else
+		{
+			//Caller = p_Bot;
+		}
 		Caller->onStart();
 		// Enable some cheat flags
 		Broodwar->enableFlag(Flag::UserInput);
@@ -119,7 +139,6 @@ int main(int argc, const char* argv[])
 				case EventType::UnitEvade:
 					Caller->onUnitEvade(e.getUnit());
 					break;
-
 				}
 			}
 
@@ -139,7 +158,6 @@ int main(int argc, const char* argv[])
 				reconnect();
 			}
 		}
-		Broodwar->restartGame();
 		std::cout << "Game ended" << std::endl;
 	}
 	std::cout << "Press ENTER to continue..." << std::endl;

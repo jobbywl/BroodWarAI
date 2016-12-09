@@ -29,11 +29,12 @@ public:
 	~ReplayAnalyzer();
 
 	void setNextMap(std::string Filename);
+	int getReplayAmount();
 
 private:
 	std::fstream *Output;
 	std::list<std::string> *replayList;
-
+	int replaysDone;
 
 	//Functions
 

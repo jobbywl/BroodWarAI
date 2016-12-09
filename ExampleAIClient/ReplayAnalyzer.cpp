@@ -12,20 +12,21 @@ using namespace Filter;
 **This can be used as a training set for the Neural Network
 */
 
-ReplayAnalyzer::ReplayAnalyzer(std::string dir)
+ReplayAnalyzer::ReplayAnalyzer(std::string dir):replaysDone(0)
 {
+	Output = new std::fstream;
 	replayList = getDirContents(dir);
 	//create the string containing the file name
-
+	replaysDone = replayList->size();
 	std::string nextmap = replayList->front();
 
 	int tempint = nextmap.find('\\');
 	while (tempint > 0)
 	{
-		nextmap.replace(tempint , 1, "/");
+		nextmap.replace(tempint, 1, "/");
 		tempint = nextmap.find('\\');
 	}
-	
+
 	setNextMap(nextmap);
 	replayList->pop_front();
 }
@@ -33,6 +34,8 @@ ReplayAnalyzer::ReplayAnalyzer(std::string dir)
 ReplayAnalyzer::~ReplayAnalyzer()
 {
 	Output->close();
+	delete Output;
+
 	if (replayList != NULL)
 		delete replayList;
 }
@@ -40,40 +43,41 @@ ReplayAnalyzer::~ReplayAnalyzer()
 void ReplayAnalyzer::onStart()
 {
 	std::string Filename("C:\\analyzedReplays\\");
-	std::string extension;
+	std::string extension("");
+	std::string matchup("");
 
+	Playerset players = Broodwar->getPlayers();
+	for (auto p : players)
+	{
+		
+		// Only print the player if they are not an observer
+		if (p->supplyUsed() != 0)
+		{
+			matchup += p->getRace().c_str();
+			matchup += "_";
+		}
+	}
 
 
 	int i = 0;
-	extension += std::to_string(i);
+	extension = std::to_string(i);
 	extension += ".log";
 
-	std::ifstream temp(Filename + extension);
+	std::ifstream temp(Filename + matchup + extension);
 
 	while (temp.is_open())
 	{
 		temp.close();
 		i++;
-		Playerset players = Broodwar->getPlayers();
-		for (auto p : players)
-		{
-			// Only print the player if they are not an observer
-			if (!p->isObserver())
-			{
-				extension += p->getRace();
-				extension += "_";
-			}
-		}
-		extension += std::to_string(i);
+		extension = std::to_string(i);
 		extension += ".log";
-		temp.open(Filename + extension);
+		temp.open(Filename + matchup + extension);
 
 	}
 	if (temp.is_open())
 		temp.close();
 
-	Output = new std::fstream;
-	Output->open(Filename + extension, std::fstream::out);
+	Output->open(Filename + matchup + extension, std::fstream::out);
 
 	// Print the map name.
 	// BWAPI returns std::string when retrieving a string, don't forget to add .c_str() when printing!
@@ -93,7 +97,6 @@ void ReplayAnalyzer::onStart()
 	if (Broodwar->isReplay())
 	{
 		Broodwar->setLocalSpeed(0);
-		Broodwar->setFrameSkip(1);
 		if (Broodwar->isDebug())
 		{
 			Broodwar->setGUI(false);
@@ -126,6 +129,7 @@ void ReplayAnalyzer::onStart()
 
 void ReplayAnalyzer::onEnd(bool isWinner)
 {
+	replaysDone--;
 	// Called when the game ends
 	Playerset players = Broodwar->getPlayers();
 	for (auto p : players)
@@ -161,7 +165,7 @@ void ReplayAnalyzer::onEnd(bool isWinner)
 		replayList->pop_front();
 	}
 	else {
-		setNextMap("maps/replays");
+		setNextMap("C:/Starcraft/maps/replays");
 	}
 
 
@@ -368,10 +372,10 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 		getline(bwapi_ini, temp2);
 		temp += temp2 + '\n';
 	}
-		
+
 
 	bwapi_ini.close();
-	
+
 
 	//first delete everything after map =
 	size_t nFPos = temp.find("map = ");
@@ -381,13 +385,18 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 	temp.erase(firstNL, secondNL - firstNL);
 	temp2 = "\nmap = ";
 	temp2 += Filename.substr(13, Filename.size());
-	temp2 += '\n';
 	//Now add a new line containing the map variable
 	temp.insert(firstNL, temp2);
-	
 
 	DeleteFile(L"C:\\Starcraft\\bwapi-data\\bwapi.ini");
 	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::out);
 	bwapi_ini << temp;
 	bwapi_ini.close();
+
+	std::cout << "Next replay is: " << Filename << std::endl;
+}
+
+int ReplayAnalyzer::getReplayAmount()
+{
+	return replaysDone;
 }
