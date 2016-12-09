@@ -54,7 +54,17 @@ void ReplayAnalyzer::onStart()
 	{
 		temp.close();
 		i++;
-		extension = std::to_string(i);
+		Playerset players = Broodwar->getPlayers();
+		for (auto p : players)
+		{
+			// Only print the player if they are not an observer
+			if (!p->isObserver())
+			{
+				extension += p->getRace();
+				extension += "_";
+			}
+		}
+		extension += std::to_string(i);
 		extension += ".log";
 		temp.open(Filename + extension);
 
