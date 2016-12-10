@@ -49,8 +49,7 @@ void WorkerManager::addWorkerToBase(BWAPI::Unit *base, std::list<BWAPI::Unit*>*w
 	{
 		if ((*i)->depot == base)
 		{
-			std::list<BWAPI::Unit*> *temp = (*i)->workers;
-			temp->splice(temp->end(), *worker);
+			(*i)->workers->splice((*i)->workers->end(), *worker);
 			break;
 		}
 	}
