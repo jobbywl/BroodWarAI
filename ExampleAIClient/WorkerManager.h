@@ -1,4 +1,6 @@
 #pragma once
+//This manager makes sure there are enough workers and they are micro'd correctly
+
 //http://www.teamliquid.net/forum/brood-war/484849-improving-mineral-gathering-rate-in-brood-war
 /*
 Instead of letting the worker unit return to the last mineral field it gathered from, the queue system calculates for each mineral field how long it will take before the worker unit will return again (with minerals of course).
