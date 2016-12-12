@@ -109,6 +109,7 @@ void WorkerManager::checkWorkers()
 
 void WorkerManager::mineralLock()
 {
+	//This is not 100% efficient yet. It does work
 	for (auto i = mp_basesList->begin(); i != mp_basesList->end(); i++)
 	{
 		//for each worker per base micro them
