@@ -44,8 +44,9 @@ namespace Worker
 
 	struct MiningBase
 	{
-		const BWAPI::Unit *depot;	//Command center, hatchery, nexus
+		const BWAPI::Unit depot;	//Command center, hatchery, nexus
 		std::list<BWAPI::Unit> *workers;
+		std::map<BWAPI::Unit, BWAPI::Unit> minerals;
 	};
 
 	class WorkerManager
@@ -54,10 +55,10 @@ namespace Worker
 		WorkerManager();
 		~WorkerManager();
 
-		void addBase(BWAPI::Unit *base);
-		void addBase(BWAPI::Unit *base, std::list<BWAPI::Unit> *worker);
-		void addWorkerToBase(BWAPI::Unit *base, BWAPI::Unit *worker);
-		void addWorkerToBase(BWAPI::Unit *base, std::list<BWAPI::Unit> *worker);
+		void addBase(BWAPI::Unit base);
+		void addBase(BWAPI::Unit base, std::list<BWAPI::Unit> *worker);
+		void addWorkerToBase(BWAPI::Unit base, BWAPI::Unit worker);
+		void addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit> *worker);
 
 		void setMineralLock(bool);
 		void setqueueSystem(bool);

@@ -31,7 +31,7 @@ void BroodWarAI::onStart()
 			for (auto w : workers)
 				list->push_back(w);
 
-			mp_Worker->addBase((BWAPI::Unit*)all, list);
+			mp_Worker->addBase((BWAPI::Unit)all, list);
 		}
 	}
 
@@ -42,6 +42,20 @@ void BroodWarAI::onEnd(bool isWinner)
 
 void BroodWarAI::onFrame()
 {
+	/*
+	BWAPI::Unitset units = BWAPI::Broodwar->getAllUnits();
+	//Convert the workers to a list
+	for (auto u : units)
+	{
+		//Add all units to appropiate manager
+		if (u->getType().isWorker() && u->isIdle())
+		{
+			BWAPI::Unit base = u->getClosestUnit(BWAPI::Filter::IsResourceDepot);
+			mp_Worker->addWorkerToBase(base, (BWAPI::Unit)u);
+		}
+	}
+	*/
+	//Micro all the mineral gatherers
 	mp_Worker->checkWorkers();
 }//
 
@@ -85,4 +99,11 @@ void BroodWarAI::onSaveGame(std::string gameName)
 {}//
 
 void BroodWarAI::onUnitComplete(BWAPI::Unit unit)
-{}//
+{
+	//Add all units to appropiate manager
+	if (unit->getType().isWorker() && unit->isIdle())
+	{
+		BWAPI::Unit base = unit->getClosestUnit(BWAPI::Filter::IsResourceDepot);
+		mp_Worker->addWorkerToBase(base, (BWAPI::Unit)unit);
+	}
+}//
