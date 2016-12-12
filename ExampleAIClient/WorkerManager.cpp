@@ -108,6 +108,9 @@ void WorkerManager::checkWorkers()
 	}
 }
 
+//Bijhouden welke worker op welke mineral patch zit in vector
+//Check of de worker idle is en zo ja koppel worker aan minerals
+//Stuur worker als die passief is naar de minerals
 void WorkerManager::mineralLock()
 {
 	//This is not 100% efficient yet. It does work
