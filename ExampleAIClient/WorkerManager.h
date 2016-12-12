@@ -45,7 +45,7 @@ namespace Worker
 	struct MiningBase
 	{
 		const BWAPI::Unit *depot;	//Command center, hatchery, nexus
-		std::list<BWAPI::Unit*> *workers;
+		std::list<BWAPI::Unit> *workers;
 	};
 
 	class WorkerManager
@@ -55,14 +55,32 @@ namespace Worker
 		~WorkerManager();
 
 		void addBase(BWAPI::Unit *base);
-		void addBase(BWAPI::Unit *base, std::list<BWAPI::Unit*>*);
+		void addBase(BWAPI::Unit *base, std::list<BWAPI::Unit> *worker);
 		void addWorkerToBase(BWAPI::Unit *base, BWAPI::Unit *worker);
-		void addWorkerToBase(BWAPI::Unit *base, std::list<BWAPI::Unit*>*);
+		void addWorkerToBase(BWAPI::Unit *base, std::list<BWAPI::Unit> *worker);
+
+		void setMineralLock(bool);
+		void setqueueSystem(bool);
+		void setcoopPathfinding(bool);
+
+		bool getMineralLock();
+		bool getqueueSystem();
+		bool getcoopPathfinding();
+
 
 		void checkWorkers();
 
 	private:
 		std::list<MiningBase*> *mp_basesList;
+
+		bool m_mineralLock;
+		bool m_queueSystem;
+		bool m_coopPathfinding;
+
+
+		void mineralLock();
+		void queueSystem();
+		void coopPathfinding();
 	};
 
 }

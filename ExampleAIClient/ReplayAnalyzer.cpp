@@ -12,10 +12,10 @@ using namespace Filter;
 **This can be used as a training set for the Neural Network
 */
 
-ReplayAnalyzer::ReplayAnalyzer(std::string dir):replaysDone(0)
+ReplayAnalyzer::ReplayAnalyzer(std::string dir) :replaysDone(0), starcraftDir(dir)
 {
 	Output = new std::fstream;
-	replayList = getDirContents(dir);
+	replayList = getDirContents(dir + "Maps\\Replays\\");
 	//create the string containing the file name
 	replaysDone = replayList->size();
 	std::string nextmap = replayList->front();
@@ -97,6 +97,7 @@ void ReplayAnalyzer::onStart()
 	if (Broodwar->isReplay())
 	{
 		Broodwar->setLocalSpeed(0);
+		Broodwar->setFrameSkip(100);
 		if (Broodwar->isDebug())
 		{
 			Broodwar->setGUI(false);
@@ -161,6 +162,7 @@ void ReplayAnalyzer::onEnd(bool isWinner)
 
 	if (replayList->size() != 0)
 	{
+		
 		setNextMap(replayList->front());
 		replayList->pop_front();
 	}
@@ -362,8 +364,10 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 	//First read all the contents to a string buffer
 	//Modify where necessary
 	//Write to file
+	std::string iniPath = starcraftDir;
+	iniPath += "bwapi-data\\bwapi.ini";
 	std::fstream bwapi_ini;
-	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::in);
+	bwapi_ini.open(iniPath, std::fstream::in);
 
 	std::string temp("");
 	std::string temp2("");
@@ -384,12 +388,13 @@ void ReplayAnalyzer::setNextMap(std::string Filename)
 
 	temp.erase(firstNL, secondNL - firstNL);
 	temp2 = "\nmap = ";
-	temp2 += Filename.substr(13, Filename.size());
+
+	temp2 += Filename.substr(Filename.find("Maps"), Filename.size());
 	//Now add a new line containing the map variable
 	temp.insert(firstNL, temp2);
 
-	DeleteFile(L"C:\\Starcraft\\bwapi-data\\bwapi.ini");
-	bwapi_ini.open(("C:\\Starcraft\\bwapi-data\\bwapi.ini"), std::fstream::out);
+	DeleteFile(toWCHAR(iniPath).c_str());
+	bwapi_ini.open(iniPath, std::fstream::out);
 	bwapi_ini << temp;
 	bwapi_ini.close();
 

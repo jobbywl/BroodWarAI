@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 #include "ReplayAnalyzer.h"
+#include "BroodWarAI.h"
 
 using namespace BWAPI;
 
@@ -36,7 +37,8 @@ int main(int argc, const char* argv[])
 	//This link has a replay pack with 7708 replays in it of high level. No duplicates
 	//http://emotion.inrialpes.fr/people/synnaeve/TLGGICCUP_gosu_reps.7z
 	//Replay crawler https://github.com/syhw/Broodwar_replays_scrappers
-	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("C:\\StarCraft\\Maps\\Replays\\");
+	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("G:\\Blizzard\\StarCraft\\");
+	BroodWarAI *p_Bot = new BroodWarAI;
 
 	reconnect();
 
@@ -45,17 +47,7 @@ int main(int argc, const char* argv[])
 	{
 		std::cout << "waiting to enter match" << std::endl;
 
-		//TODO: only execute if it was a replay
-		if (p_Analyzer->getReplayAmount() > 0)
-		{
-			std::cout << p_Analyzer->getReplayAmount() << " Replays to go" << std::endl;
-
-		}
-		else
-		{
-			std::cout << "All replays done quitting program now" << std::endl;
-			break;
-		}
+		
 
 		while (!Broodwar->isInGame())
 		{
@@ -70,12 +62,22 @@ int main(int argc, const char* argv[])
 		//If the game is a replay load the replay analyzer;
 		if (Broodwar->isReplay())
 		{
+			//TODO: only execute if it was a replay
+			if (p_Analyzer->getReplayAmount() > 0)
+			{
+				std::cout << p_Analyzer->getReplayAmount() << " Replays to go" << std::endl;
 
+			}
+			else
+			{
+				std::cout << "All replays done quitting program now" << std::endl;
+				break;
+			}
 			Caller = p_Analyzer;
 		}
 		else
 		{
-			//Caller = p_Bot;
+			Caller = p_Bot;
 		}
 		Caller->onStart();
 		// Enable some cheat flags

@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BroodWarAI.cpp" />
     <ClCompile Include="BuildingManager.cpp" />
     <ClCompile Include="ExampleAIClient.cpp" />
     <ClCompile Include="MicroManager.cpp" />
@@ -97,6 +98,7 @@
     <ClCompile Include="WorkerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BroodWarAI.h" />
     <ClInclude Include="BuildingManager.h" />
     <ClInclude Include="MicroManager.h" />
     <ClInclude Include="ReplayAnalyzer.h" />

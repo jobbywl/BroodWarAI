@@ -41,4 +41,5 @@ private:
 private:
 	std::list<std::string> *getDirContents(std::string dir);
 	std::wstring toWCHAR(std::string);
+	std::string starcraftDir;
 };
