@@ -46,7 +46,8 @@ int main(int argc, const char* argv[])
 	//This link has a replay pack with 7708 replays in it of high level. No duplicates
 	//http://emotion.inrialpes.fr/people/synnaeve/TLGGICCUP_gosu_reps.7z
 	//Replay crawler https://github.com/syhw/Broodwar_replays_scrappers
-	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("C:\\StarCraft\\");
+	//ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("C:\\StarCraft\\");
+	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("G:\\Blizzard\\StarCraft\\");
 	BroodWarAI *p_Bot = new BroodWarAI;
 
 	reconnect();

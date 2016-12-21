@@ -19,7 +19,7 @@ namespace Worker{
 		std::vector<double> mineralTimer;
 		std::map<BWAPI::Unit,bool> previousWorkerState;
 
-		const double gatherTime = 40;
+		const double gatherTime = 90;
 	};
 
 	struct CoopPathfindingData

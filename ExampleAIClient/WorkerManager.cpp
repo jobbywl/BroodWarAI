@@ -39,7 +39,7 @@ void WorkerManager::addBase(BWAPI::Unit base, std::list<BWAPI::Unit>* worker)
 	{
 		//only add local minerals, Distance is just a guess
 		std::cout << base->getDistance(m) << std::endl;
-		if (base->getDistance(m) < 150)
+		if (base->getDistance(m) < 200)
 			tempMinerals->push_back((BWAPI::Unit)m);
 	}
 
@@ -51,7 +51,7 @@ void WorkerManager::addBase(BWAPI::Unit base, std::list<BWAPI::Unit>* worker)
 	{
 		//only add local geysers, Distance is just a guess
 		std::cout << base->getDistance(m) << std::endl;
-		if (base->getDistance(m) < 150)
+		if (base->getDistance(m) < 200)
 			tempGeysers->push_back((BWAPI::Unit)m);
 	}
 
@@ -86,11 +86,13 @@ void WorkerManager::addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit>* wo
 		if ((*i)->depot->getID() == base->getID())
 		{
 			(*i)->workers->splice((*i)->workers->end(), *worker);
+			for (auto w : *(*i)->workers)
+			{
+				mp_queue->previousWorkerState.emplace(w, false);
+			}
 			break;
 		}
-	}
-	for (auto w: *worker)
-		mp_queue->previousWorkerState.emplace(w, false);
+	}	
 }
 
 
@@ -269,7 +271,7 @@ void WorkerManager::queueSystem()
 		{
 			//if the probe was carrying minerals in the previous frame
 			//Or the worker is idle
-			if ((w->isCarryingMinerals() && !mp_queue->previousWorkerState.find(w)->second))
+			if ((!w->isCarryingMinerals() && mp_queue->previousWorkerState.find(w)->second) || w->isIdle())
 			{
 				//if worker is idle and not gathering anything
 
