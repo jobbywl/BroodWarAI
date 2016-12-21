@@ -5,7 +5,6 @@
 BroodWarAI::BroodWarAI()
 {
 	mp_Worker = new Worker::WorkerManager;
-	mp_Worker->setMineralLock(true);
 	std::clog << "Ai created" << std::endl;
 }
 

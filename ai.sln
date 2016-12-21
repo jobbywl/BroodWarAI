@@ -14,6 +14,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{ED60409E-9CFB-4122-9369-1ABF6AC90824}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleAIClient", "ExampleAIClient\ExampleAIClient.vcxproj", "{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FB6108D1-70E7-44AE-8BB9-AC715D7FA8EC} = {FB6108D1-70E7-44AE-8BB9-AC715D7FA8EC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AStarSearch", "AStarSearch\AStarSearch.vcxproj", "{E76D772E-2D8F-4142-A102-89412DF50A76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +50,10 @@ Global
 		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Debug|Win32.Build.0 = Debug|Win32
 		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Release|Win32.ActiveCfg = Release|Win32
 		{AE3B9DC4-5FBB-4B57-8AB4-0D84D8649D78}.Release|Win32.Build.0 = Release|Win32
+		{E76D772E-2D8F-4142-A102-89412DF50A76}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E76D772E-2D8F-4142-A102-89412DF50A76}.Debug|Win32.Build.0 = Debug|Win32
+		{E76D772E-2D8F-4142-A102-89412DF50A76}.Release|Win32.ActiveCfg = Release|Win32
+		{E76D772E-2D8F-4142-A102-89412DF50A76}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

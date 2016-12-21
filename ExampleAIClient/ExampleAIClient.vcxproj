@@ -91,6 +91,7 @@
     <ClCompile Include="BroodWarAI.cpp" />
     <ClCompile Include="BuildingManager.cpp" />
     <ClCompile Include="ExampleAIClient.cpp" />
+    <ClCompile Include="FrameCounter.cpp" />
     <ClCompile Include="MicroManager.cpp" />
     <ClCompile Include="ReplayAnalyzer.cpp" />
     <ClCompile Include="ScoutManager.cpp" />
@@ -100,11 +101,13 @@
   <ItemGroup>
     <ClInclude Include="BroodWarAI.h" />
     <ClInclude Include="BuildingManager.h" />
+    <ClInclude Include="FrameCounter.h" />
     <ClInclude Include="MicroManager.h" />
     <ClInclude Include="ReplayAnalyzer.h" />
     <ClInclude Include="ScoutManager.h" />
     <ClInclude Include="StrategyManager.h" />
     <ClInclude Include="WorkerManager.h" />
+    <ClInclude Include="WorkerMicroData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

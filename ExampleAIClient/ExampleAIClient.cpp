@@ -9,6 +9,7 @@
 
 #include "ReplayAnalyzer.h"
 #include "BroodWarAI.h"
+#include "FrameCounter.h"
 
 using namespace BWAPI;
 
@@ -19,6 +20,7 @@ void showPlayers();
 void showForces();
 bool show_bullets;
 bool show_visibility_data;
+bool moveCamera = false;
 
 void reconnect()
 {
@@ -31,13 +33,20 @@ void reconnect()
 
 int main(int argc, const char* argv[])
 {
+	//initialize the framecounter
+	FrameCounter::getInstance();
+
+	if (argc == 2)
+		moveCamera = true;
+
+
 	std::cout << "Connecting..." << std::endl;;
 
 	BWAPI::AIModule *Caller;
 	//This link has a replay pack with 7708 replays in it of high level. No duplicates
 	//http://emotion.inrialpes.fr/people/synnaeve/TLGGICCUP_gosu_reps.7z
 	//Replay crawler https://github.com/syhw/Broodwar_replays_scrappers
-	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("G:\\Blizzard\\StarCraft\\");
+	ReplayAnalyzer *p_Analyzer = new ReplayAnalyzer("C:\\StarCraft\\");
 	BroodWarAI *p_Bot = new BroodWarAI;
 
 	reconnect();
@@ -91,6 +100,8 @@ int main(int argc, const char* argv[])
 
 		while (Broodwar->isInGame())
 		{
+			//This must be called on each logic frame
+			FrameCounter::getInstance().onFrame();
 			Caller->onFrame();
 			for (auto &e : Broodwar->getEvents())
 			{

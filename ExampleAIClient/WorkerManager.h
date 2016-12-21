@@ -38,15 +38,18 @@ Used sometimes by humans in the early stages of the game to gain a mineral lead 
 */
 
 #include <BWAPI.h>
+#include "WorkerMicroData.h"
+#include <chrono>
+#include "FrameCounter.h"
 
 namespace Worker
 {
-
 	struct MiningBase
 	{
 		const BWAPI::Unit depot;	//Command center, hatchery, nexus
 		std::list<BWAPI::Unit> *workers;
-		std::map<BWAPI::Unit, BWAPI::Unit> minerals;
+		std::list<BWAPI::Unit> *minerals;
+		std::list<BWAPI::Unit> *geysers;
 	};
 
 	class WorkerManager
@@ -60,7 +63,7 @@ namespace Worker
 		void addWorkerToBase(BWAPI::Unit base, BWAPI::Unit worker);
 		void addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit> *worker);
 
-		void setMineralLock(bool);
+		void setMineralLock();
 		void setqueueSystem(bool);
 		void setcoopPathfinding(bool);
 
@@ -71,17 +74,25 @@ namespace Worker
 
 		void checkWorkers();
 
+		float needExpansion();
+
+
 	private:
 		std::list<MiningBase*> *mp_basesList;
-
-		bool m_mineralLock;
-		bool m_queueSystem;
-		bool m_coopPathfinding;
-
 
 		void mineralLock();
 		void queueSystem();
 		void coopPathfinding();
+
+		void drawTimers();
+
+		double CalcTravelTime(BWAPI::Unit a, BWAPI::Unit b);
+
+		QueueData *mp_queue;
+		MineralLockData *mp_mineralLock;
+		CoopPathfindingData *mp_coopPathfinding;
+
+		unsigned int start;
 	};
 
 }

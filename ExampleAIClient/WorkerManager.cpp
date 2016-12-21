@@ -3,11 +3,14 @@ using namespace Worker;
 
 WorkerManager::WorkerManager()
 :mp_basesList(NULL)
-, m_mineralLock(false)
-, m_queueSystem(false)
-, m_coopPathfinding(false)
+, mp_queue(NULL)
+, mp_mineralLock(NULL)
+, mp_coopPathfinding(NULL)
 {
 	mp_basesList = new std::list<MiningBase*>;
+	//Always start with mineral lock
+	setqueueSystem(true);
+	start = FrameCounter::getInstance().CountedFrames();
 }
 
 
@@ -26,8 +29,34 @@ void WorkerManager::addBase(BWAPI::Unit base)
 //Adds a base to the list with a list of workers
 void WorkerManager::addBase(BWAPI::Unit base, std::list<BWAPI::Unit>* worker)
 {
-	std::clog << "Added a base" << std::endl;
-	MiningBase *temp = new MiningBase{ base, worker };
+	std::clog << "Adding a base" << std::endl;
+
+	BWAPI::Unitset mineralset = BWAPI::Broodwar->getMinerals();
+	//create a list on the heap
+	std::list<BWAPI::Unit> *tempMinerals = new std::list<BWAPI::Unit>;
+	//Generate the list for each base with its minerals
+	for (auto &m : mineralset)
+	{
+		//only add local minerals, Distance is just a guess
+		std::cout << base->getDistance(m) << std::endl;
+		if (base->getDistance(m) < 150)
+			tempMinerals->push_back((BWAPI::Unit)m);
+	}
+
+	BWAPI::Unitset geyserset = BWAPI::Broodwar->getGeysers();
+	//create a list on the heap
+	std::list<BWAPI::Unit> *tempGeysers = new std::list<BWAPI::Unit>;
+	//Generate the list for each base with its geysers
+	for (auto &m : geyserset)
+	{
+		//only add local geysers, Distance is just a guess
+		std::cout << base->getDistance(m) << std::endl;
+		if (base->getDistance(m) < 150)
+			tempGeysers->push_back((BWAPI::Unit)m);
+	}
+
+
+	MiningBase *temp = new MiningBase{ base, worker, tempMinerals, tempGeysers };
 
 	mp_basesList->push_back(temp);
 }
@@ -53,59 +82,117 @@ void WorkerManager::addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit>* wo
 	{
 		if ((*i)->depot == base)
 		{
-			(*i)->workers->splice((*i)->workers->end(),*worker);
+			(*i)->workers->splice((*i)->workers->end(), *worker);
 			break;
 		}
 	}
 }
 
 
-void WorkerManager::setMineralLock(bool temp)
+//Mineral lock cant be combined so it will turn all the other micro methods of
+void WorkerManager::setMineralLock()
 {
-	if (temp)
-	{
-		m_coopPathfinding = !temp;
-		m_queueSystem = !temp;
-	}
-	m_mineralLock = temp;
 
+	if (mp_coopPathfinding)
+	{
+		delete mp_coopPathfinding;
+		mp_coopPathfinding = NULL;
+	}
+
+	if (mp_queue)
+	{
+		delete mp_queue;
+		mp_queue = NULL;
+	}
+	mp_mineralLock = new MineralLockData;
 }
 
+//This can be combined
 void WorkerManager::setqueueSystem(bool temp)
 {
 	if (temp)
-		m_mineralLock = !temp;
-	m_queueSystem = temp;
+	{
+		if (mp_mineralLock)
+		{
+			delete mp_mineralLock;
+			mp_mineralLock = NULL;
+		}
+		mp_queue = new QueueData;
+	}
+	else
+	{
+		if (mp_queue)
+		{
+			delete mp_queue;
+			mp_queue = NULL;
+		}
+
+		if (!getcoopPathfinding())
+		{
+			//If no other is defined set mineral lock
+			setMineralLock();
+		}
+	}
+
 }
 
+//This can be combined
 void WorkerManager::setcoopPathfinding(bool temp)
 {
 	if (temp)
-		m_mineralLock = !temp;
-	m_coopPathfinding = temp;
+	{
+		if (mp_mineralLock)
+		{
+			delete mp_mineralLock;
+			mp_mineralLock = NULL;
+		}
+		mp_coopPathfinding = new CoopPathfindingData;
+	}
+	else
+	{
+		if (mp_coopPathfinding)
+		{
+			delete mp_coopPathfinding;
+			mp_coopPathfinding = NULL;
+		}
+
+		if (!getqueueSystem())
+		{
+			//If no other is defined set mineral lock
+			setMineralLock();
+		}
+	}
+
 }
 
 bool WorkerManager::getMineralLock()
 {
-	return m_mineralLock;
+	if (mp_mineralLock)
+		return true;
+	return false;
 }
 
 bool WorkerManager::getqueueSystem()
 {
-	return m_queueSystem;
+	if (mp_queue)
+		return true;
+	return false;
 }
 
 bool WorkerManager::getcoopPathfinding()
 {
-	return m_coopPathfinding;
+	if (mp_coopPathfinding)
+		return true;
+	return false;
 }
 
 void WorkerManager::checkWorkers()
 {
-	if (m_mineralLock)
-	{
+	if (getMineralLock())
 		mineralLock();
-	}
+	else if (getqueueSystem())
+		queueSystem();
+	//exeecute
 }
 
 //Bijhouden welke worker op welke mineral patch zit in vector
@@ -113,7 +200,6 @@ void WorkerManager::checkWorkers()
 //Stuur worker als die passief is naar de minerals
 void WorkerManager::mineralLock()
 {
-	//This is not 100% efficient yet. It does work
 	for (auto i = mp_basesList->begin(); i != mp_basesList->end(); i++)
 	{
 		//for each worker per base micro them
@@ -121,51 +207,125 @@ void WorkerManager::mineralLock()
 		//(*i)->workers
 		//send each worker to the mineral field that is closest to it
 
-		BWAPI::Unitset mineralset = BWAPI::Broodwar->getMinerals();
-		std::vector<BWAPI::Unit> minerals;
-
-		for (auto &m : mineralset)
-			minerals.push_back(m);
-
-		for (auto u = (*i)->workers->begin(); u != (*i)->workers->end();u++)
-		{
-
-			if ((*u)->getType().isWorker() && !((*u)->isCarryingMinerals() || (*u)->isGatheringMinerals()))
-			{
-				BWAPI::Unit closestMineral = nullptr;
-				//iterator needs to be saved for the erase the operation
-				int count=0;
-
-				for (auto m = minerals.begin(); m != minerals.end(); m++)
-				{
-					if (!closestMineral || (*u)->getDistance(*m) < (*u)->getDistance(closestMineral))
-					{
-						closestMineral = *m;
-						count++;
-					}
-
-				}
-				if (closestMineral)
-				{
-					//Erase the closest mineral from the list because it is now used
-					minerals.erase(minerals.begin() + count);
-					//Create a worker mineral pair
-					(*i)->minerals.emplace(closestMineral, *u);
-					//Issue the command
-					(*u)->rightClick(closestMineral);
-				}
-					
-			}
-		}
 	}
 }
 
 void WorkerManager::queueSystem()
 {
+	drawTimers();
 
+
+	for (auto i = mp_basesList->begin(); i != mp_basesList->end(); i++)
+	{
+		//for each worker per base micro them
+		//Send each worker to the closest available mineral patch, keeping in mind gather time and travel time
+
+		//Create a list with minerals based on the distance from the base
+		std::list<BWAPI::Unit> listCopy(*(*i)->minerals);
+		while (mp_queue->mineralMap.size() != (*i)->minerals->size())
+		{
+			BWAPI::Unit Closestmineral = listCopy.front();
+
+
+			for (auto mineral = listCopy.begin(); mineral != listCopy.end(); mineral++)
+			{
+				if (Closestmineral->getDistance((*i)->depot) < (*mineral)->getDistance((*i)->depot))
+					Closestmineral = (*mineral);
+			}
+			listCopy.remove(Closestmineral);
+
+			mp_queue->mineralTimer.push_back(0.0);
+			mp_queue->mineralVector.push_back(Closestmineral);
+			mp_queue->mineralMap.emplace(Closestmineral, mp_queue->mineralMap.size());
+
+		}
+
+		//Update the mineral timers.
+
+		for (auto &i : mp_queue->mineralTimer)
+		{
+			if (i > 0.0)
+				i -= FrameCounter::getInstance().CountedFrames() - start;
+			else
+				i = 0;
+		}
+		start = FrameCounter::getInstance().CountedFrames();
+
+		//iterate through all its workers
+		for (auto w : (*(*i)->workers))
+		{
+			if (!(w->isCarryingMinerals() || w->isGatheringMinerals()))
+			{
+				mp_queue->previousWorkerState.emplace(w, w->isCarryingMinerals());
+				//if worker is idle and not gathering anything
+
+
+				for (int i = 0; i < mp_queue->mineralTimer.size(); i++)
+				{
+					//Calculate the time it takes to travel to the mineral. If it is less then a worker is busy at the closest mineral patch then send it to the minereal patch.
+
+					if (CalcTravelTime((BWAPI::Unit)w, mp_queue->mineralVector[i]) > mp_queue->mineralTimer[i])
+					{
+						mp_queue->mineralTimer[i] = CalcTravelTime((BWAPI::Unit)w, mp_queue->mineralVector[i]) * 2 + mp_queue->gatherTime;
+						w->rightClick(mp_queue->mineralVector[i]);
+						break;
+					}
+				}
+			}
+		}
+	}
 }
+
+
+// 0.5av^2
+//--------
+//  0.5a^3  = s
+//
+
+
+
 
 void WorkerManager::coopPathfinding()
 {
 
+}
+
+//This function returns the need of making an expansion based on minerals and gas left
+float WorkerManager::needExpansion()
+{
+	return 0;
+}
+
+void WorkerManager::drawTimers()
+{
+	for (int i = 0; i < mp_queue->mineralVector.size(); i++)
+	{
+
+		BWAPI::Broodwar->drawTextMap(mp_queue->mineralVector[i]->getPosition(), "%f", mp_queue->mineralTimer[i], BWAPI::Text::Red);
+	}
+
+	for (auto &w : *(mp_basesList->front()->workers))
+	{
+		BWAPI::Broodwar->drawBoxMap(w->getLeft(), w->getTop(), w->getRight(), w->getBottom(), BWAPI::Color(0xff, 0x00, 0x00), true);
+		BWAPI::Broodwar->drawLineMap(w->getPosition(), w->getLastCommand().getTargetPosition(), BWAPI::Color(0xff, 0x00, 0x00));
+	}
+
+}
+
+double WorkerManager::CalcTravelTime(BWAPI::Unit a, BWAPI::Unit b)
+{
+	double traveltime;
+
+	double speed = a->getType().topSpeed();
+	double accel = a->getType().acceleration();
+	double haltd = a->getType().haltDistance();
+
+	double distance = a->getDistance(b);
+
+	traveltime = distance / speed;
+
+
+
+
+	return traveltime;
 }
