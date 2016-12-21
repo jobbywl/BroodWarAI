@@ -56,9 +56,11 @@ void WorkerManager::addBase(BWAPI::Unit base, std::list<BWAPI::Unit>* worker)
 	}
 
 
-	MiningBase *temp = new MiningBase{ base, worker, tempMinerals, tempGeysers };
+	MiningBase *temp = new MiningBase{ base, new std::list<BWAPI::Unit>, tempMinerals, tempGeysers };
 
 	mp_basesList->push_back(temp);
+
+	addWorkerToBase(base, worker);
 }
 
 //Searches in the list for the pointer of the base, Then adds the worker to the list
@@ -69,6 +71,7 @@ void WorkerManager::addWorkerToBase(BWAPI::Unit base, BWAPI::Unit worker)
 
 		if ((*i)->depot->getID() == base->getID())
 		{
+			mp_queue->previousWorkerState.emplace(worker, false);
 			(*i)->workers->push_back(worker);
 			break;
 		}
@@ -80,12 +83,14 @@ void WorkerManager::addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit>* wo
 {
 	for (auto i = mp_basesList->begin(); i != mp_basesList->end(); i++)
 	{
-		if ((*i)->depot == base)
+		if ((*i)->depot->getID() == base->getID())
 		{
 			(*i)->workers->splice((*i)->workers->end(), *worker);
 			break;
 		}
 	}
+	for (auto w: *worker)
+		mp_queue->previousWorkerState.emplace(w, false);
 }
 
 
@@ -117,6 +122,14 @@ void WorkerManager::setqueueSystem(bool temp)
 			delete mp_mineralLock;
 			mp_mineralLock = NULL;
 		}
+
+		//Make sure there are enough places for the previous states
+		for (auto baseIterator : *mp_basesList)
+		{
+			for (auto w : *(baseIterator->workers))
+				mp_queue->previousWorkerState.emplace(w, false);
+		}
+
 		mp_queue = new QueueData;
 	}
 	else
@@ -237,7 +250,6 @@ void WorkerManager::queueSystem()
 			mp_queue->mineralTimer.push_back(0.0);
 			mp_queue->mineralVector.push_back(Closestmineral);
 			mp_queue->mineralMap.emplace(Closestmineral, mp_queue->mineralMap.size());
-
 		}
 
 		//Update the mineral timers.
@@ -251,12 +263,14 @@ void WorkerManager::queueSystem()
 		}
 		start = FrameCounter::getInstance().CountedFrames();
 
+
 		//iterate through all its workers
 		for (auto w : (*(*i)->workers))
 		{
-			if (!(w->isCarryingMinerals() || w->isGatheringMinerals()))
+			//if the probe was carrying minerals in the previous frame
+			//Or the worker is idle
+			if ((w->isCarryingMinerals() && !mp_queue->previousWorkerState.find(w)->second))
 			{
-				mp_queue->previousWorkerState.emplace(w, w->isCarryingMinerals());
 				//if worker is idle and not gathering anything
 
 
@@ -268,10 +282,15 @@ void WorkerManager::queueSystem()
 					{
 						mp_queue->mineralTimer[i] = CalcTravelTime((BWAPI::Unit)w, mp_queue->mineralVector[i]) * 2 + mp_queue->gatherTime;
 						w->rightClick(mp_queue->mineralVector[i]);
+
+						//save previous state
+						mp_queue->previousWorkerState.find(w)->second = w->isCarryingMinerals();
 						break;
 					}
 				}
 			}
+			//save previous state
+			mp_queue->previousWorkerState.find(w)->second = w->isCarryingMinerals();
 		}
 	}
 }
