@@ -207,6 +207,19 @@ bool WorkerManager::getcoopPathfinding()
 
 void WorkerManager::checkWorkers()
 {
+	//If Unit is still worker and exist
+	for (auto base : *mp_basesList)
+	{
+		for (auto w : *(base->workers))
+		{
+			if (!(w->getType().isWorker() || w->exists()))
+			{
+				base->workers->remove(w);
+			}
+		}
+		
+	}
+
 	if (getMineralLock())
 		mineralLock();
 	else if (getqueueSystem())
