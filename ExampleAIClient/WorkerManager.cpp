@@ -85,11 +85,15 @@ void WorkerManager::addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit>* wo
 	{
 		if ((*i)->depot->getID() == base->getID())
 		{
-			(*i)->workers->splice((*i)->workers->end(), *worker);
-			for (auto w : *(*i)->workers)
+			if (worker != NULL)
 			{
-				mp_queue->previousWorkerState.emplace(w, false);
+				(*i)->workers->splice((*i)->workers->end(), *worker);
+				for (auto w : *(*i)->workers)
+				{
+					mp_queue->previousWorkerState.emplace(w, false);
+				}
 			}
+			
 			break;
 		}
 	}	
@@ -244,7 +248,7 @@ void WorkerManager::queueSystem()
 
 			for (auto mineral = listCopy.begin(); mineral != listCopy.end(); mineral++)
 			{
-				if (Closestmineral->getDistance((*i)->depot) < (*mineral)->getDistance((*i)->depot))
+				if (Closestmineral->getDistance((*i)->depot) > (*mineral)->getDistance((*i)->depot))
 					Closestmineral = (*mineral);
 			}
 			listCopy.remove(Closestmineral);
@@ -289,6 +293,11 @@ void WorkerManager::queueSystem()
 						mp_queue->previousWorkerState.find(w)->second = w->isCarryingMinerals();
 						break;
 					}
+					else
+					{
+						//No mineral patch so idle
+						w->stop();
+					}
 				}
 			}
 			//save previous state
@@ -329,6 +338,11 @@ void WorkerManager::drawTimers()
 	{
 		BWAPI::Broodwar->drawBoxMap(w->getLeft(), w->getTop(), w->getRight(), w->getBottom(), BWAPI::Color(0xff, 0x00, 0x00), true);
 		BWAPI::Broodwar->drawLineMap(w->getPosition(), w->getLastCommand().getTargetPosition(), BWAPI::Color(0xff, 0x00, 0x00));
+	}
+
+	for (auto base : *mp_basesList)
+	{
+		BWAPI::Broodwar->drawTextMap(base->depot->getPosition(), "%d", base->depot->getID(), BWAPI::Text::Red);
 	}
 
 }

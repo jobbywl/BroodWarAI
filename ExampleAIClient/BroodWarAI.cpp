@@ -105,4 +105,8 @@ void BroodWarAI::onUnitComplete(BWAPI::Unit unit)
 		BWAPI::Unit base = unit->getClosestUnit(BWAPI::Filter::IsResourceDepot);
 		mp_Worker->addWorkerToBase(base, (BWAPI::Unit)unit);
 	}
+	else if (unit->getType().isResourceDepot())
+	{
+		mp_Worker->addBase(unit);
+	}
 }//
