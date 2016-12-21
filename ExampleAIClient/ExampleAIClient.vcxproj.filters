@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ReplayAnalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExampleAIClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StrategyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MicroManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoutManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildingManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BroodWarAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkerManager.cpp">
+      <Filter>Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameCounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{9ae332ab-f7ec-40cc-ad1e-bb2e9343d9f0}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7e4606d4-99f5-4957-b525-5f4f77a5332e}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Worker">
+      <UniqueIdentifier>{a52d4fdc-494d-4971-93aa-c60dfc8c8e9a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ReplayAnalyzer.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="StrategyManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MicroManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoutManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingManager.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="BroodWarAI.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkerManager.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkerMicroData.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameCounter.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
