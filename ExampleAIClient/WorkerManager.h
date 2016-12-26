@@ -46,10 +46,13 @@ namespace Worker
 {
 	struct MiningBase
 	{
-		const BWAPI::Unit depot;	//Command center, hatchery, nexus
 		std::list<BWAPI::Unit> *workers;
 		std::list<BWAPI::Unit> *minerals;
 		std::list<BWAPI::Unit> *geysers;
+
+		QueueData *mp_queue;
+		MineralLockData *mp_mineralLock;
+		CoopPathfindingData *mp_coopPathfinding;
 	};
 
 	class WorkerManager
@@ -71,6 +74,9 @@ namespace Worker
 		bool getqueueSystem();
 		bool getcoopPathfinding();
 
+		bool minerallock;
+		bool queuesystem;
+		bool cooppathfinding;
 
 		void checkWorkers();
 
@@ -78,7 +84,8 @@ namespace Worker
 
 
 	private:
-		std::list<MiningBase*> *mp_basesList;
+		//Use a set to prevent duplicates and unordered for speed
+		std::unordered_map<BWAPI::Unit,MiningBase*> *mp_basesList;
 
 		void mineralLock();
 		void queueSystem();
@@ -88,9 +95,6 @@ namespace Worker
 
 		double CalcTravelTime(BWAPI::Unit a, BWAPI::Unit b);
 
-		QueueData *mp_queue;
-		MineralLockData *mp_mineralLock;
-		CoopPathfindingData *mp_coopPathfinding;
 
 		unsigned int start;
 	};

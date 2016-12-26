@@ -16,6 +16,7 @@ BroodWarAI::~BroodWarAI()
 void BroodWarAI::onStart()
 {
 	std::clog << "Ai Started" << std::endl;
+	
 	//Add all the units to the first base
 	BWAPI::Unitset temp = BWAPI::Broodwar->getAllUnits();
 
