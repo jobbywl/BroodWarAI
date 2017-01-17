@@ -47,8 +47,6 @@ bool WorkerUnit::isBuilder()
 
 bool WorkerUnit::isAlive()
 {
-	if (mp_resource)
-		return false;
 	return mp_unit->exists();
 }
 

@@ -5,7 +5,7 @@
 BroodWarAI::BroodWarAI()
 :mp_Worker(NULL)
 {
-	
+
 	std::clog << "Ai created" << std::endl;
 }
 
@@ -17,13 +17,18 @@ BroodWarAI::~BroodWarAI()
 void BroodWarAI::onStart()
 {
 	std::clog << "creating worker manager" << std::endl;
-	mp_Worker = new Worker::WorkerManager;
+	if (mp_Worker == NULL)
+		mp_Worker = new Worker::WorkerManager;
 	std::clog << "Ai Started" << std::endl;
-	
+
 }//
 
 void BroodWarAI::onEnd(bool isWinner)
-{}//
+{
+	if (mp_Worker != NULL)
+		delete mp_Worker;
+	mp_Worker = NULL;
+}//
 
 void BroodWarAI::onFrame()
 {
@@ -32,18 +37,18 @@ void BroodWarAI::onFrame()
 	//Convert the workers to a list
 	for (auto u : units)
 	{
-		//Add all units to appropiate manager
-		if (u->getType().isWorker() && u->isIdle())
-		{
-			BWAPI::Unit base = u->getClosestUnit(BWAPI::Filter::IsResourceDepot);
-			mp_Worker->addWorkerToBase(base, (BWAPI::Unit)u);
-		}
+	//Add all units to appropiate manager
+	if (u->getType().isWorker() && u->isIdle())
+	{
+	BWAPI::Unit base = u->getClosestUnit(BWAPI::Filter::IsResourceDepot);
+	mp_Worker->addWorkerToBase(base, (BWAPI::Unit)u);
+	}
 	}
 	*/
 	//Micro all the mineral gatherers
 	mp_Worker->checkWorkers();
 
-	
+
 }//
 
 void BroodWarAI::onSendText(std::string text)

@@ -27,6 +27,11 @@ namespace Worker
 		bool isSaturated();
 		void setSaturated(bool);
 
+		void startWorkerCreation();
+		void stopWorkerCreation();
+		bool isTraingingWorkers();
+		void TrainWorkers();
+
 		//Set algo's
 		void setQueue();
 		void setMineralLock();
@@ -50,6 +55,7 @@ namespace Worker
 
 		int scanRange;
 		bool saturated;
+		bool trainWorkers;
 
 		//Debug stuff
 		int infolevel;

@@ -10,6 +10,8 @@ MiningBase::MiningBase(BWAPI::Unit base, int scanrange)
 , scanRange(scanrange)
 , mp_miningAlgo(NULL)
 , mp_workerSet(NULL)
+, saturated(false)
+, trainWorkers(true)
 {
 	std::clog << "creating mining base" << std::endl;
 	//Get a unit set with all the workers near the base
@@ -140,9 +142,14 @@ void MiningBase::setMineralLock()
 
 void MiningBase::checkWorkers()
 {
+	if (!saturated && trainWorkers)
+		TrainWorkers();
 	//update state of every worker
 	for (auto i : *mp_workerSet)
-		i.second->Update();
+	{
+		if (i.second->isAlive())
+			i.second->Update();		
+	}
 
 	//Run mining algo
 	if (mp_miningAlgo != NULL)
@@ -174,4 +181,39 @@ void MiningBase::setSaturated(bool val)
 BWAPI::Unit MiningBase::getResourceDepot()
 {
 	return mp_resourceDepot;
+}
+
+void MiningBase::startWorkerCreation()
+{
+	trainWorkers = true;
+}
+
+void MiningBase::stopWorkerCreation()
+{
+	trainWorkers = false;
+}
+
+bool MiningBase::isTraingingWorkers()
+{
+	return trainWorkers;
+}
+
+void MiningBase::TrainWorkers()
+{
+		
+		if (BWAPI::Broodwar->canMake(BWAPI::UnitTypes::Terran_SCV) )
+		{
+			if(mp_resourceDepot->getTrainingQueue().size()==0)
+				mp_resourceDepot->train(BWAPI::UnitTypes::Terran_SCV);
+		}
+		else if (BWAPI::Broodwar->canMake(BWAPI::UnitTypes::Zerg_Drone))
+		{
+			if (mp_resourceDepot->getTrainingQueue().size() == 0)
+				mp_resourceDepot->train(BWAPI::UnitTypes::Zerg_Drone);
+		}
+		else if (BWAPI::Broodwar->canMake(BWAPI::UnitTypes::Protoss_Probe))
+		{
+			if (mp_resourceDepot->getTrainingQueue().size() == 0)
+				mp_resourceDepot->train(BWAPI::UnitTypes::Protoss_Probe);
+		}
 }
