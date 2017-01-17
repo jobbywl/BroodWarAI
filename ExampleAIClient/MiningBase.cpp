@@ -4,10 +4,10 @@
 
 using namespace Worker;
 
-MiningBase::MiningBase(BWAPI::Unit base)
+MiningBase::MiningBase(BWAPI::Unit base, int scanrange)
 :mp_resourceDepot(base)
 , infolevel(0)
-, scanRange(350)
+, scanRange(scanrange)
 , mp_miningAlgo(NULL)
 , mp_workerSet(NULL)
 {
@@ -19,31 +19,20 @@ MiningBase::MiningBase(BWAPI::Unit base)
 	{
 		addWorker(w);
 	}
-	//Get unit set with mineral patches
-	mp_minerals = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsMineralField);
-	//get unit set with geysers
-	mp_geysers = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsResourceContainer && !BWAPI::Filter::IsMineralField);
-	//get refinerys near base
-	mp_refinerys = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsRefinery);
-}
+	//Get unit set with mineral patches, and sort by distance
+	BWAPI::Unitset temp = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsMineralField);
 
-MiningBase::MiningBase(BWAPI::Unit base, int scanrange)
-:mp_resourceDepot(base)
-, infolevel(0)
-, scanRange(scanrange)
-, mp_miningAlgo(NULL)
-, mp_workerSet(NULL)
-{
-	std::clog << "creating mining base" << std::endl;
-	//Get a unit set with all the workers near the base
-	mp_workerSet = new std::unordered_map<int,WorkerUnit*>;
-	BWAPI::Unitset mp_worker = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsWorker && BWAPI::Filter::IsIdle && BWAPI::Filter::IsOwned);
-	for (auto w : mp_worker)
+	while (temp.size() > 0)
 	{
-		addWorker(w);
+		BWAPI::Unit closest = *temp.begin();
+		for (auto m : temp)
+		{
+			if (base->getDistance(closest) > base->getDistance(m))
+				closest = m;
+		}
+		temp.erase(closest);
+		mp_minerals.emplace(closest);
 	}
-	//Get unit set with mineral patches
-	mp_minerals = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsMineralField);
 	//get unit set with geysers
 	mp_geysers = mp_resourceDepot->getUnitsInRadius(scanRange, BWAPI::Filter::IsResourceContainer && !BWAPI::Filter::IsMineralField);
 	//get refinerys near base
@@ -66,7 +55,7 @@ void MiningBase::addWorker(BWAPI::Unit worker)
 	std::clog << "Adding worker with ID: " << worker->getID() << "To base with ID: " << mp_resourceDepot << std::endl;
 	WorkerUnit *temp = new WorkerUnit(worker);
 	mp_workers.emplace(worker);
-	auto i = mp_workerSet->emplace(worker->getID(),temp);
+	auto i = mp_workerSet->emplace(worker->getID(), temp);
 	//if second value is true it already exists in the list so delete the pointer
 	if (!i.second)
 	{
@@ -114,15 +103,10 @@ void MiningBase::drawInfo()
 	//draw scanrange circle
 	BWAPI::Broodwar->drawCircleMap(mp_resourceDepot->getPosition(), scanRange, BWAPI::Colors::Purple, false);
 
-	//draw a rectangle around every worker and mineral patch
-	for (auto w : mp_workers)
-	{
-		BWAPI::Broodwar->drawBoxMap(w->getLeft(), w->getTop(), w->getRight(), w->getBottom(), BWAPI::Colors::Red);
-	}
-
 	for (auto w : mp_minerals)
 	{
 		BWAPI::Broodwar->drawBoxMap(w->getLeft(), w->getTop(), w->getRight(), w->getBottom(), BWAPI::Colors::Blue);
+		BWAPI::Broodwar->drawTextMap(w->getPosition(),"%d",w->getID());
 	}
 }
 
@@ -175,4 +159,19 @@ BWAPI::Unitset MiningBase::getResourceContainers()
 std::unordered_map<int, WorkerUnit*> * MiningBase::getWorkerUnitList()
 {
 	return mp_workerSet;
+}
+
+bool MiningBase::isSaturated()
+{
+	return saturated;
+}
+
+void MiningBase::setSaturated(bool val)
+{
+	saturated = val;
+}
+
+BWAPI::Unit MiningBase::getResourceDepot()
+{
+	return mp_resourceDepot;
 }

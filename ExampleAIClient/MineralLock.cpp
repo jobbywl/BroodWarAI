@@ -7,12 +7,17 @@ MineralLock::MineralLock(MiningBase *base)
 :mp_minerals(NULL)
 , mp_base(base)
 {
-	mp_minerals = new std::unordered_map<BWAPI::Unit, int>;
+	mp_minerals = new std::multimap<int,BWAPI::Unit>;
 
 	for (auto m : mp_base->getResourceContainers())
 	{
 		if (m->getType().isMineralField())
-			mp_minerals->emplace(m, 1);
+			mp_minerals->emplace(mp_base->getResourceDepot()->getDistance(m),m);
+	}
+	for (auto m : mp_base->getResourceContainers())
+	{
+		if (m->getType().isMineralField())
+			mp_minerals->emplace(mp_base->getResourceDepot()->getDistance(m)*2, m);
 	}
 }
 
@@ -28,8 +33,22 @@ void MineralLock::execute()
 	{
 		if (worker.second->isMineralGatherer() && worker.second->getUnitInterface()->isIdle())
 			worker.second->gather();
-		else if ((!worker.second->isGasGatherer()) && (!worker.second->isBuilder()))
+		else if ((!worker.second->isGasGatherer()) && (!worker.second->isBuilder()) && worker.second->isIdle())
 			addWorker(worker.second);
+		else if (worker.second->isMineralGatherer() && !worker.second->getUnitInterface()->isCarryingMinerals())
+		{
+			BWAPI::Unit temp = worker.second->getUnitInterface()->getOrderTarget();
+			int id1;
+			if (temp != NULL)
+			{
+				id1 = temp->getID();
+				int id2 = worker.second->getResource()->getID();
+				if (id1 != id2)
+					worker.second->gather();
+			}
+			 
+		}
+			
 	}
 	
 }
@@ -41,21 +60,16 @@ bool MineralLock::isMineralLock()
 
 void MineralLock::addWorker(WorkerUnit* worker)
 {
-	BWAPI::Unit closest = mp_minerals->begin()->first;
-	for (auto m : *mp_minerals)
+	if (mp_minerals->size() > 0)
 	{
-		if (m.second > 0)
-		{
-			if (closest->getDistance(worker->getUnitInterface()) > m.first->getDistance(worker->getUnitInterface()))
-			{
-				closest = m.first;
-			}
-		}
-	}
+		BWAPI::Unit closest = mp_minerals->begin()->second;
+		mp_minerals->erase(mp_minerals->begin());
 
-	if (mp_minerals->at(closest) > 0)
+
+		BWAPI::Unit temp = worker->setResource(closest);
+	}
+	else
 	{
-		worker->setResource(closest);
-		mp_minerals->at(closest)--;
+		mp_base->setSaturated(true);
 	}
 }

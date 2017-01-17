@@ -11,7 +11,8 @@ namespace Worker
 
 		bool deliveredMinerals();
 
-		void setResource(BWAPI::Unit);
+		BWAPI::Unit setResource(BWAPI::Unit);
+		BWAPI::Unit getResource();
 
 		void gather();
 		void move(BWAPI::Position);

@@ -10,8 +10,7 @@ namespace Worker
 	class MiningBase
 	{
 	public:
-		MiningBase(BWAPI::Unit);
-		MiningBase(BWAPI::Unit, int);
+		MiningBase(BWAPI::Unit, int =350);
 		virtual ~MiningBase();
 
 		void addWorker(BWAPI::Unit);
@@ -25,6 +24,9 @@ namespace Worker
 
 		void checkWorkers();
 
+		bool isSaturated();
+		void setSaturated(bool);
+
 		//Set algo's
 		void setQueue();
 		void setMineralLock();
@@ -34,6 +36,8 @@ namespace Worker
 		void drawInfo();
 
 		BWAPI::Unitset getResourceContainers();
+
+		BWAPI::Unit getResourceDepot();
 
 	private:
 		BWAPI::Unit mp_resourceDepot;
@@ -45,6 +49,7 @@ namespace Worker
 		MiningAlgo *mp_miningAlgo;
 
 		int scanRange;
+		bool saturated;
 
 		//Debug stuff
 		int infolevel;

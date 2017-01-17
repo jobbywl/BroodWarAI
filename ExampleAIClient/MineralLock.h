@@ -15,13 +15,11 @@ namespace Worker
 		MineralLock(MiningBase *base);
 		virtual ~MineralLock();
 
-		
-
 		void execute();
 
 		bool isMineralLock();
 	private:
-		std::unordered_map<BWAPI::Unit, int> *mp_minerals;
+		std::multimap<int,BWAPI::Unit> *mp_minerals;
 		MiningBase *mp_base;
 
 		void addWorker(WorkerUnit*);

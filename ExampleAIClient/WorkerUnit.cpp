@@ -13,9 +13,16 @@ WorkerUnit::~WorkerUnit()
 {
 }
 
-void WorkerUnit::setResource(BWAPI::Unit res)
+BWAPI::Unit WorkerUnit::setResource(BWAPI::Unit res)
 {
+	BWAPI::Unit temp = mp_resource;
 	mp_resource = res;
+	return temp;
+}
+
+BWAPI::Unit WorkerUnit::getResource()
+{
+	return mp_resource;
 }
 
 bool WorkerUnit::isMineralGatherer()
@@ -96,5 +103,8 @@ bool WorkerUnit::deliveredMinerals()
 void WorkerUnit::drawInfo()
 {
 	BWAPI::Broodwar->drawLineMap(mp_unit->getPosition(), mp_resource->getPosition(), BWAPI::Colors::Red);
+
+	BWAPI::Broodwar->drawBoxMap(mp_unit->getLeft(), mp_unit->getTop(), mp_unit->getRight(), mp_unit->getBottom(), BWAPI::Colors::Red);
+
 	BWAPI::Broodwar->drawTextMap(mp_unit->getPosition(), "%d", mp_unit->getID());
 }
