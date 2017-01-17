@@ -38,23 +38,11 @@ Used sometimes by humans in the early stages of the game to gain a mineral lead 
 */
 
 #include <BWAPI.h>
-#include "WorkerMicroData.h"
 #include <chrono>
 #include "FrameCounter.h"
-
+#include "MiningBase.h"
 namespace Worker
 {
-	struct MiningBase
-	{
-		std::list<BWAPI::Unit> *workers;
-		std::list<BWAPI::Unit> *minerals;
-		std::list<BWAPI::Unit> *geysers;
-
-		QueueData *mp_queue;
-		MineralLockData *mp_mineralLock;
-		CoopPathfindingData *mp_coopPathfinding;
-	};
-
 	class WorkerManager
 	{
 	public:
@@ -62,21 +50,15 @@ namespace Worker
 		~WorkerManager();
 
 		void addBase(BWAPI::Unit base);
-		void addBase(BWAPI::Unit base, std::list<BWAPI::Unit> *worker);
+		void addBase(BWAPI::Unit base, BWAPI::Unitset worker);
 		void addWorkerToBase(BWAPI::Unit base, BWAPI::Unit worker);
-		void addWorkerToBase(BWAPI::Unit base, std::list<BWAPI::Unit> *worker);
+		void addWorkerToBase(BWAPI::Unit base, BWAPI::Unitset worker);
 
-		void setMineralLock();
-		void setqueueSystem(bool);
-		void setcoopPathfinding(bool);
 
 		bool getMineralLock();
 		bool getqueueSystem();
 		bool getcoopPathfinding();
 
-		bool minerallock;
-		bool queuesystem;
-		bool cooppathfinding;
 
 		void checkWorkers();
 
@@ -85,18 +67,14 @@ namespace Worker
 
 	private:
 		//Use a set to prevent duplicates and unordered for speed
-		std::unordered_map<BWAPI::Unit,MiningBase*> *mp_basesList;
-
-		void mineralLock();
-		void queueSystem();
-		void coopPathfinding();
-
+		std::unordered_map<int,MiningBase*> *mp_basesList;
 		void drawTimers();
 
 		double CalcTravelTime(BWAPI::Unit a, BWAPI::Unit b);
-
-
 		unsigned int start;
+
+		//Few variables only used for speed
+		BWAPI::Unitset mp_minerals;
 	};
 
 }

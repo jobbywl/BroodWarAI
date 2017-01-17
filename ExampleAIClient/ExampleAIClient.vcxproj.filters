@@ -28,6 +28,24 @@
     <ClCompile Include="FrameCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MineralLock.cpp">
+      <Filter>Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="MiningBase.cpp">
+      <Filter>Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="Queue.cpp">
+      <Filter>Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkerUnit.cpp">
+      <Filter>Worker</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Subject.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">
@@ -40,6 +58,9 @@
     </Filter>
     <Filter Include="Worker">
       <UniqueIdentifier>{a52d4fdc-494d-4971-93aa-c60dfc8c8e9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{5d472cc9-ab6f-4b98-9990-4acc1fa921f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,11 +85,29 @@
     <ClInclude Include="WorkerManager.h">
       <Filter>Worker</Filter>
     </ClInclude>
-    <ClInclude Include="WorkerMicroData.h">
-      <Filter>Worker</Filter>
-    </ClInclude>
     <ClInclude Include="FrameCounter.h">
       <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MineralLock.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="MiningBase.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="MiningAlgo.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkerUnit.h">
+      <Filter>Worker</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

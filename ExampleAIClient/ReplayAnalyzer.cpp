@@ -18,17 +18,26 @@ ReplayAnalyzer::ReplayAnalyzer(std::string dir) :replaysDone(0), starcraftDir(di
 	replayList = getDirContents(dir + "Maps\\Replays\\");
 	//create the string containing the file name
 	replaysDone = replayList->size();
-	std::string nextmap = replayList->front();
 
-	int tempint = nextmap.find('\\');
-	while (tempint > 0)
+	if (replayList->size() > 0)
 	{
-		nextmap.replace(tempint, 1, "/");
-		tempint = nextmap.find('\\');
-	}
 
-	setNextMap(nextmap);
-	replayList->pop_front();
+		std::string nextmap = replayList->front();
+
+		int tempint = nextmap.find('\\');
+		while (tempint > 0)
+		{
+			nextmap.replace(tempint, 1, "/");
+			tempint = nextmap.find('\\');
+		}
+
+		setNextMap(nextmap);
+		replayList->pop_front();
+	}
+	else
+	{
+		std::cout << "Starcraft is not installed at: " + dir << std::endl << "Replay is not available" <<std::endl;
+	}
 }
 
 ReplayAnalyzer::~ReplayAnalyzer()
@@ -49,7 +58,7 @@ void ReplayAnalyzer::onStart()
 	Playerset players = Broodwar->getPlayers();
 	for (auto p : players)
 	{
-		
+
 		// Only print the player if they are not an observer
 		if (p->supplyUsed() != 0)
 		{
@@ -162,7 +171,7 @@ void ReplayAnalyzer::onEnd(bool isWinner)
 
 	if (replayList->size() != 0)
 	{
-		
+
 		setNextMap(replayList->front());
 		replayList->pop_front();
 	}

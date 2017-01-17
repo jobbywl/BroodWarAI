@@ -3,8 +3,9 @@
 
 
 BroodWarAI::BroodWarAI()
+:mp_Worker(NULL)
 {
-	mp_Worker = new Worker::WorkerManager;
+	
 	std::clog << "Ai created" << std::endl;
 }
 
@@ -15,26 +16,10 @@ BroodWarAI::~BroodWarAI()
 
 void BroodWarAI::onStart()
 {
+	std::clog << "creating worker manager" << std::endl;
+	mp_Worker = new Worker::WorkerManager;
 	std::clog << "Ai Started" << std::endl;
 	
-	//Add all the units to the first base
-	BWAPI::Unitset temp = BWAPI::Broodwar->getAllUnits();
-
-	for (auto all : temp)
-	{
-		if (all->getType().isResourceDepot())
-		{
-			//Get a unit set with all the workers near the base
-			BWAPI::Unitset workers = all->getUnitsInRadius(12, BWAPI::Filter::IsWorker && BWAPI::Filter::IsIdle && BWAPI::Filter::IsOwned);
-			//Convert the workers to a list
-			std::list<BWAPI::Unit> *list = new std::list<BWAPI::Unit>;
-			for (auto w : workers)
-				list->push_back(w);
-
-			mp_Worker->addBase((BWAPI::Unit)all, list);
-		}
-	}
-
 }//
 
 void BroodWarAI::onEnd(bool isWinner)
@@ -57,6 +42,8 @@ void BroodWarAI::onFrame()
 	*/
 	//Micro all the mineral gatherers
 	mp_Worker->checkWorkers();
+
+	
 }//
 
 void BroodWarAI::onSendText(std::string text)
@@ -101,13 +88,14 @@ void BroodWarAI::onSaveGame(std::string gameName)
 void BroodWarAI::onUnitComplete(BWAPI::Unit unit)
 {
 	//Add all units to appropiate manager
-	if (unit->getType().isWorker() && unit->isIdle())
+	//First bases then workers
+	if (unit->getType().isResourceDepot())
+	{
+		mp_Worker->addBase(unit);
+	}
+	else if (unit->getType().isWorker() && unit->isIdle())
 	{
 		BWAPI::Unit base = unit->getClosestUnit(BWAPI::Filter::IsResourceDepot);
 		mp_Worker->addWorkerToBase(base, (BWAPI::Unit)unit);
-	}
-	else if (unit->getType().isResourceDepot())
-	{
-		mp_Worker->addBase(unit);
 	}
 }//

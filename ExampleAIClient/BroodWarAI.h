@@ -2,7 +2,8 @@
 #include <BWAPI.h>
 #include "WorkerManager.h"
 
-class BroodWarAI : public BWAPI::AIModule
+class BroodWarAI 
+	: public BWAPI::AIModule
 {
 public:
 	// Virtual functions for callbacks, leave these as they are.
