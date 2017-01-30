@@ -46,6 +46,9 @@
     <ClCompile Include="Subject.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="MiningAlgo.cpp">
+      <Filter>Worker</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">

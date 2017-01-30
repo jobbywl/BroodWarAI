@@ -30,7 +30,7 @@ void WorkerManager::addBase(BWAPI::Unit base)
 
 	mp_basesList->emplace(base->getID(), new MiningBase(base));
 
-	mp_basesList->at(base->getID())->setMineralLock();
+	mp_basesList->at(base->getID())->setQueue();
 }
 
 //Adds a base to the list with a list of workers
@@ -47,7 +47,7 @@ void WorkerManager::addBase(BWAPI::Unit base, BWAPI::Unitset worker)
 	mp_basesList->emplace(base->getID(), new MiningBase(base));
 
 	addWorkerToBase(base, worker);
-	mp_basesList->at(base->getID())->setMineralLock();
+	mp_basesList->at(base->getID())->setQueue();
 }
 
 //Searches in the list for the pointer of the base, Then adds the worker to the list

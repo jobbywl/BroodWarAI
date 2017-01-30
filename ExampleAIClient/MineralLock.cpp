@@ -31,10 +31,16 @@ void MineralLock::execute()
 {
 	for (auto worker : *(mp_base->getWorkerUnitList()))
 	{
+		//If worker is idle and a mineralgatherer
 		if (worker.second->isMineralGatherer() && worker.second->getUnitInterface()->isIdle())
+		{
 			worker.second->gather();
-		else if ((!worker.second->isGasGatherer()) && (!worker.second->isBuilder()) && worker.second->isIdle())
+			calcTravelTime(worker.second->getUnitInterface(),worker.second->getResource());
+		}
+		//If worker is not a gas gatherer or a builder and idle and the base is not saturated
+		else if ((!worker.second->isGasGatherer()) && (!worker.second->isBuilder()) && worker.second->isIdle() && !mp_base->isSaturated())
 			addWorker(worker.second);
+		//if worker is a mineralgtherer and not carrying minerals
 		else if (worker.second->isMineralGatherer() && !worker.second->getUnitInterface()->isCarryingMinerals())
 		{
 			BWAPI::Unit temp = worker.second->getUnitInterface()->getOrderTarget();
@@ -44,7 +50,11 @@ void MineralLock::execute()
 				id1 = temp->getID();
 				int id2 = worker.second->getResource()->getID();
 				if (id1 != id2)
+				{
 					worker.second->gather();
+					calcTravelTime(worker.second->getUnitInterface(), worker.second->getResource());
+				}
+					
 			}
 			 
 		}

@@ -36,6 +36,7 @@ namespace Worker
 
 		bool wasCarrying;
 		bool delivered;
+		bool isGatherer;
 	};
 
 }

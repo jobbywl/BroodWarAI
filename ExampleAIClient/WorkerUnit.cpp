@@ -5,6 +5,7 @@ using namespace Worker;
 WorkerUnit::WorkerUnit(BWAPI::Unit u)
 :mp_unit(u)
 , mp_resource(NULL)
+, isGatherer(false)
 {
 }
 
@@ -15,6 +16,11 @@ WorkerUnit::~WorkerUnit()
 
 BWAPI::Unit WorkerUnit::setResource(BWAPI::Unit res)
 {
+	if (res != NULL)
+		isGatherer = true;
+	else
+		isGatherer = false;
+
 	BWAPI::Unit temp = mp_resource;
 	mp_resource = res;
 	return temp;
@@ -27,9 +33,7 @@ BWAPI::Unit WorkerUnit::getResource()
 
 bool WorkerUnit::isMineralGatherer()
 {
-	if (mp_resource == NULL)
-		return false;
-	return mp_resource->getType().isMineralField();
+	return isGatherer;
 }
 
 bool WorkerUnit::isGasGatherer()
@@ -64,9 +68,12 @@ BWAPI::Unit WorkerUnit::getUnitInterface()
 
 void WorkerUnit::gather()
 {
-	mp_unit->gather(mp_resource);
-	//reset delivered flag
-	delivered = false;
+	if (mp_resource != 0 && mp_resource != (BWAPI::Unit)1)
+	{
+		mp_unit->gather(mp_resource);
+		//reset delivered flag
+		delivered = false;
+	}
 }
 
 void WorkerUnit::move(BWAPI::Position pos)
@@ -77,6 +84,13 @@ void WorkerUnit::move(BWAPI::Position pos)
 
 void WorkerUnit::Update()
 {
+	if (mp_unit->isMoving())
+		i++;
+	else
+		i = 0;
+	if (i!=0)
+		std::clog << "ID: " << mp_unit->getID() <<" " << i << std::endl;
+
 	//This gets called on every frame, it also contains a pointer to the class that called it
 	
 	if (isMineralGatherer())

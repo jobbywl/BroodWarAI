@@ -98,6 +98,7 @@
     <ClCompile Include="FrameCounter.cpp" />
     <ClCompile Include="MicroManager.cpp" />
     <ClCompile Include="MineralLock.cpp" />
+    <ClCompile Include="MiningAlgo.cpp" />
     <ClCompile Include="MiningBase.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Queue.cpp" />

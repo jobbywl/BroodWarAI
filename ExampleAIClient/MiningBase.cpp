@@ -114,14 +114,14 @@ void MiningBase::drawInfo()
 
 void MiningBase::setQueue()
 {
-	if (mp_miningAlgo = NULL)
-		mp_miningAlgo = new Queue;
+	if (mp_miningAlgo == NULL)
+		mp_miningAlgo = new Queue(this);
 	else
 	{
 		if (!mp_miningAlgo->isQueue())
 		{
 			delete mp_miningAlgo;
-			mp_miningAlgo = new Queue;
+			mp_miningAlgo = new Queue(this);
 		}
 	}
 }
@@ -143,7 +143,13 @@ void MiningBase::setMineralLock()
 void MiningBase::checkWorkers()
 {
 	if (!saturated && trainWorkers)
+	{
 		TrainWorkers();
+	}
+	else if (mp_resourceDepot->isTraining())
+	{
+		mp_resourceDepot->cancelTrain();
+	}
 	//update state of every worker
 	for (auto i : *mp_workerSet)
 	{
